@@ -1,21 +1,31 @@
-package com.coinbase.producer
+package com.coinbase.producer.ws
 
 import com.github.andyglow.websocket.WebsocketClient
 import com.github.andyglow.websocket.WebsocketClient.Builder.Options
 import com.github.andyglow.websocket.util.Uri
 import com.typesafe.scalalogging.Logger
-import org.json4s.DefaultFormats
-import org.json4s.native.Serialization
+import io.circe.syntax._
 
-class CoinbaseWebsocketClient(uri: String,
-                              onMessage: PartialFunction[String, Unit]) {
+trait WebsocketClient {
+
+  def subscribe(products: List[String],
+                messageHandler: WebsocketMessageHandler): Unit
+
+  def exceptionHandler: PartialFunction[Throwable, Unit]
+
+  def closeHandler: Unit => Unit
+
+}
+
+class CoinbaseWebsocketClient(uri: String) extends WebsocketClient {
 
   val logger: Logger = Logger(classOf[CoinbaseWebsocketClient])
 
-  def subscribe(products: List[String]): Unit = {
+  override def subscribe(products: List[String],
+                         messageHandler: WebsocketMessageHandler): Unit = {
     val builder = new WebsocketClient.Builder[String](
       Uri(uri),
-      onMessage,
+      messageHandler.onMessage,
       Options(
         maxFramePayloadLength = Int.MaxValue,
         exceptionHandler = exceptionHandler,
@@ -30,19 +40,22 @@ class CoinbaseWebsocketClient(uri: String,
   }
 
   private def subscriptionMessage(productIds: List[String]): String = {
-    val message = Map(
-      "type" -> "subscribe",
-      "channels" -> List(Map("name" -> "level2", "product_ids" -> productIds))
-    )
-
-    Serialization.write(message)(DefaultFormats)
+    s"""
+       |{
+       |  "type": "subscribe",
+       |  "channels": [{
+       |    "name": "level2",
+       |    "product_ids": ${productIds.asJson}
+       |  }]
+       |}
+       |""".stripMargin
   }
 
-  private def exceptionHandler: PartialFunction[Throwable, Unit] = {
+  override def exceptionHandler: PartialFunction[Throwable, Unit] = {
     case ex: Throwable => logger.error("Websocket connection exception.", ex)
   }
 
-  private def closeHandler: (Unit => Unit) = _ => {
+  override def closeHandler: (Unit => Unit) = _ => {
     logger.info("Coinbase websocket connection closed.")
   }
 

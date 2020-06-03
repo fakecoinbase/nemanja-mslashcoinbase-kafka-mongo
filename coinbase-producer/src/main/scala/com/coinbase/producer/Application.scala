@@ -1,14 +1,17 @@
 package com.coinbase.producer
 
-import com.typesafe.scalalogging.Logger
+import com.coinbase.producer.ws.{
+  CoinbaseWebsocketClient,
+  CoinbaseWebsocketMessageHandler
+}
 
 object Application extends App {
-  val logger = Logger("coinbase-producer")
 
-  val coinbaseWebsocketClient =
-    new CoinbaseWebsocketClient(Configuration.websocketUri, {
-      case message => logger.info(message)
-    })
+  val coinbaseWebsocketClient = new CoinbaseWebsocketClient(
+    Configuration.websocketUri
+  )
 
-  coinbaseWebsocketClient.subscribe(Configuration.products)
+  val messageHandler = new CoinbaseWebsocketMessageHandler()
+
+  coinbaseWebsocketClient.subscribe(Configuration.products, messageHandler)
 }
