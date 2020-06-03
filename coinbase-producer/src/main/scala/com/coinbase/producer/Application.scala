@@ -1,5 +1,6 @@
 package com.coinbase.producer
 
+import com.coinbase.producer.kafka.MarketEventProducer
 import com.coinbase.producer.ws.{
   CoinbaseWebsocketClient,
   CoinbaseWebsocketMessageHandler
@@ -11,7 +12,9 @@ object Application extends App {
     Configuration.websocketUri
   )
 
-  val messageHandler = new CoinbaseWebsocketMessageHandler()
+  val messageHandler = new CoinbaseWebsocketMessageHandler(
+    new MarketEventProducer
+  )
 
   coinbaseWebsocketClient.subscribe(Configuration.products, messageHandler)
 }

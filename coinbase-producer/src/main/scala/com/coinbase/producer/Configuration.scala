@@ -5,6 +5,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import scala.jdk.CollectionConverters._
 
 object Configuration {
+
   private val config: Config = ConfigFactory.load()
 
   val websocketUri: String = config.getString("websocket.uri")

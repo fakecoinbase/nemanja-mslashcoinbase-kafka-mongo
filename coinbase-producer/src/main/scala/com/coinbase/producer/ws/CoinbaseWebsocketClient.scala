@@ -6,23 +6,12 @@ import com.github.andyglow.websocket.util.Uri
 import com.typesafe.scalalogging.Logger
 import io.circe.syntax._
 
-trait WebsocketClient {
-
-  def subscribe(products: List[String],
-                messageHandler: WebsocketMessageHandler): Unit
-
-  def exceptionHandler: PartialFunction[Throwable, Unit]
-
-  def closeHandler: Unit => Unit
-
-}
-
-class CoinbaseWebsocketClient(uri: String) extends WebsocketClient {
+class CoinbaseWebsocketClient(uri: String) {
 
   val logger: Logger = Logger(classOf[CoinbaseWebsocketClient])
 
-  override def subscribe(products: List[String],
-                         messageHandler: WebsocketMessageHandler): Unit = {
+  def subscribe(products: List[String],
+                messageHandler: WebsocketMessageHandler): Unit = {
     val builder = new WebsocketClient.Builder[String](
       Uri(uri),
       messageHandler.onMessage,
@@ -51,11 +40,11 @@ class CoinbaseWebsocketClient(uri: String) extends WebsocketClient {
        |""".stripMargin
   }
 
-  override def exceptionHandler: PartialFunction[Throwable, Unit] = {
+  def exceptionHandler: PartialFunction[Throwable, Unit] = {
     case ex: Throwable => logger.error("Websocket connection exception.", ex)
   }
 
-  override def closeHandler: (Unit => Unit) = _ => {
+  def closeHandler: (Unit => Unit) = _ => {
     logger.info("Coinbase websocket connection closed.")
   }
 
