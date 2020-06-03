@@ -10,9 +10,7 @@ import org.apache.kafka.clients.producer.{
   ProducerRecord
 }
 
-class MarketEventProducer {
-
-  private val configuration = MarketEventProducerConfiguration
+class MarketEventProducer(configuration: ProducerConfiguration) {
 
   private val producer = new KafkaProducer[Long, String](properties)
 
@@ -43,4 +41,11 @@ class MarketEventProducer {
     properties.put(ProducerConfig.ACKS_CONFIG, configuration.acks)
     properties
   }
+}
+
+object MarketEventProducer {
+  def apply(
+    implicit configuration: ProducerConfiguration =
+      MarketEventProducerConfiguration
+  ): MarketEventProducer = new MarketEventProducer(configuration)
 }

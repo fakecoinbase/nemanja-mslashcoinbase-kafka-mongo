@@ -2,7 +2,15 @@ package com.coinbase.producer.kafka
 
 import com.typesafe.config.ConfigFactory
 
-object MarketEventProducerConfiguration {
+trait ProducerConfiguration {
+  val topic: String
+  val servers: String
+  val keySerializer: String
+  val valueSerializer: String
+  val acks: String
+}
+
+object MarketEventProducerConfiguration extends ProducerConfiguration {
 
   private val config = ConfigFactory.load()
 
