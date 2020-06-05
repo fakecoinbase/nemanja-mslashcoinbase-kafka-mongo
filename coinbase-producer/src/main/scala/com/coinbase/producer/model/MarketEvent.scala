@@ -5,17 +5,18 @@ import java.text.SimpleDateFormat
 import io.circe.generic.semiauto._
 import io.circe.{Decoder, Encoder}
 
-case class MarketEvent(id: Long,
-                       productId: String,
+case class MarketEvent(productId: String,
                        side: String,
                        price: BigDecimal,
                        size: BigDecimal,
-                       timestamp: String)
+                       timestamp: String) {
+
+  val id: Long = new SimpleDateFormat("yyyy-mm-dd'T'HH:mm:ss.ssssss'Z'")
+    .parse(timestamp)
+    .getTime
+}
 
 object MarketEvent {
-
-  private val timestampFormatter =
-    new SimpleDateFormat("yyyy-mm-dd'T'HH:mm:ss.ssssss'Z'")
 
   implicit val encoder: Encoder[MarketEvent] = deriveEncoder
 
@@ -27,7 +28,6 @@ object MarketEvent {
         time <- rawJson.get[String]("time")
       } yield
         MarketEvent(
-          timestampFormatter.parse(time).getTime,
           productId,
           changes.head.head,
           BigDecimal(changes.head(1)),
