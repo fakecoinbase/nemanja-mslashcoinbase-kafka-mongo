@@ -39,6 +39,7 @@ class MongoConsumer(mongoSinkClient: MongoSinkClient,
           mongoSinkClient.upsertMany(
             buffer.map(record => (record.key(), record.value()))
           )
+          consumer.commitSync()
           bulkConsume()
       }
 
