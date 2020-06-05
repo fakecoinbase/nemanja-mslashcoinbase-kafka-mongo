@@ -10,6 +10,7 @@ trait ProducerConfiguration {
   val acks: String
   val batchSize: Int
   val lingerMs: Int
+  val compressionType: String
 }
 
 object MarketEventProducerConfiguration extends ProducerConfiguration {
@@ -31,4 +32,7 @@ object MarketEventProducerConfiguration extends ProducerConfiguration {
   override val batchSize: Int = config.getInt("kafka.producer.batch.size")
 
   override val lingerMs: Int = config.getInt("kafka.producer.linger.ms")
+
+  override val compressionType: String =
+    config.getString("kafka.producer.compression.type")
 }

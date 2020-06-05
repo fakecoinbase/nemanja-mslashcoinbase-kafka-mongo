@@ -56,23 +56,24 @@ class MongoConsumer(mongoSinkClient: MongoSinkClient,
     val properties = new Properties()
     properties.put(
       ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
-      MongoConsumerConfiguration.servers
+      configuration.servers
     )
+    properties.put(ConsumerConfig.GROUP_ID_CONFIG, configuration.groupId)
     properties.put(
-      ConsumerConfig.GROUP_ID_CONFIG,
-      MongoConsumerConfiguration.groupId
+      ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,
+      configuration.autoOffsetReset
     )
     properties.put(
       ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG,
-      MongoConsumerConfiguration.allowAutoCreateTopic
+      configuration.allowAutoCreateTopic
     )
     properties.put(
       ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG,
-      MongoConsumerConfiguration.enableAutoCommit
+      configuration.enableAutoCommit
     )
     properties.put(
       ConsumerConfig.FETCH_MIN_BYTES_CONFIG,
-      MongoConsumerConfiguration.fetchMinBytes
+      configuration.fetchMinBytes
     )
     properties.put(
       ConsumerConfig.MAX_POLL_RECORDS_CONFIG,
@@ -80,11 +81,11 @@ class MongoConsumer(mongoSinkClient: MongoSinkClient,
     )
     properties.put(
       ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
-      MongoConsumerConfiguration.keyDeserializer
+      configuration.keyDeserializer
     )
     properties.put(
       ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-      MongoConsumerConfiguration.valueDeserializer
+      configuration.valueDeserializer
     )
     properties
   }

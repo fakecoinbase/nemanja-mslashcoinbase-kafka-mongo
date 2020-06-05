@@ -41,6 +41,10 @@ class MarketEventProducer(configuration: ProducerConfiguration) {
     properties.put(ProducerConfig.ACKS_CONFIG, configuration.acks)
     properties.put(ProducerConfig.BATCH_SIZE_CONFIG, configuration.batchSize)
     properties.put(ProducerConfig.LINGER_MS_CONFIG, configuration.lingerMs)
+    properties.put(
+      ProducerConfig.COMPRESSION_TYPE_CONFIG,
+      configuration.compressionType
+    )
     properties
   }
 }
