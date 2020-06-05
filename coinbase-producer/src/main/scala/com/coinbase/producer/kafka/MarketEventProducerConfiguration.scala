@@ -8,21 +8,27 @@ trait ProducerConfiguration {
   val keySerializer: String
   val valueSerializer: String
   val acks: String
+  val batchSize: Int
+  val lingerMs: Int
 }
 
 object MarketEventProducerConfiguration extends ProducerConfiguration {
 
   private val config = ConfigFactory.load()
 
-  val topic: String = config.getString("kafka.producer.topic")
+  override val topic: String = config.getString("kafka.producer.topic")
 
-  val servers: String = config.getString("kafka.producer.servers")
+  override val servers: String = config.getString("kafka.producer.servers")
 
-  val keySerializer: String = config.getString("kafka.producer.key.serializer")
+  override val keySerializer: String =
+    config.getString("kafka.producer.key.serializer")
 
-  val valueSerializer: String =
+  override val valueSerializer: String =
     config.getString("kafka.producer.value.serializer")
 
-  val acks: String = config.getString("kafka.producer.acks")
+  override val acks: String = config.getString("kafka.producer.acks")
 
+  override val batchSize: Int = config.getInt("kafka.producer.batch.size")
+
+  override val lingerMs: Int = config.getInt("kafka.producer.linger.ms")
 }
